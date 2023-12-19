@@ -1,11 +1,11 @@
-mod enpoints;
-mod market_client;
-mod rest_client;
 mod config;
+mod enpoints;
 mod errors;
-mod util;
+mod market_client;
 mod models;
+mod rest_client;
+mod util;
 
-pub use market_client::*;
 pub use enpoints::*;
+pub use market_client::*;
 pub use models::*;
