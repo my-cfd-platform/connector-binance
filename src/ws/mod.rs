@@ -1,10 +1,10 @@
+mod binance_client_callback;
 mod binance_ws_client;
-mod models;
+mod binance_ws_settings;
 mod error;
 mod event_handler;
-mod binance_ws_settings;
-
+mod models;
 pub use binance_ws_client::*;
-pub use models::*;
 pub use error::*;
 pub use event_handler::*;
+pub use models::*;
