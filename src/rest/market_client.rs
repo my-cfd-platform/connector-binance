@@ -5,10 +5,10 @@ use super::{
     models::OrderbookSnapshot,
     rest_client::RestClient,
     util::build_request,
-    Kline, KlineInterval, KlineData,
+    Kline, KlineData, KlineInterval,
 };
 use crate::rest::errors::Result;
-use std::{collections::BTreeMap};
+use std::collections::BTreeMap;
 
 #[derive(Clone)]
 pub struct BinanceMarketClient {
@@ -68,7 +68,10 @@ impl BinanceMarketClient {
         parameters.insert("interval".into(), interval.to_string());
         parameters.insert("limit".into(), limit.to_string());
         if let Some(start_time) = start_time {
-            parameters.insert("startTime".into(), start_time.timestamp_millis().to_string());
+            parameters.insert(
+                "startTime".into(),
+                start_time.timestamp_millis().to_string(),
+            );
         }
         if let Some(end_time) = end_time {
             parameters.insert("endTime".into(), end_time.timestamp_millis().to_string());
