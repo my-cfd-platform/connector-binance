@@ -6,7 +6,7 @@ use std::sync::Arc;
 use super::binance_client_callback::BinanceClientCallback;
 use super::binance_ws_settings::BinanceWsSetting;
 use super::event_handler::*;
-use tokio_tungstenite::tungstenite::Message;
+use my_web_socket_client::tokio_tungstenite::tungstenite::Message;
 
 pub struct BinanceWsClient {
     ws_client: WebSocketClient,

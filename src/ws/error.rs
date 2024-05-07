@@ -1,6 +1,6 @@
 use crate::ws::WsChannel;
+use my_web_socket_client::tokio_tungstenite::tungstenite;
 use thiserror::Error;
-use tokio_tungstenite::tungstenite;
 
 #[derive(Debug, Error)]
 pub enum WsError {

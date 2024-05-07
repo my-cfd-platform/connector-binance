@@ -1,6 +1,6 @@
-use serde::Deserialize;
 use error_chain::error_chain;
-use tokio_tungstenite::tungstenite;
+use my_web_socket_client::tokio_tungstenite::tungstenite;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct BinanceContentError {

@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
+use my_web_socket_client::tokio_tungstenite::tungstenite::Message;
 use my_web_socket_client::{WsCallback, WsConnection};
 use rust_extensions::Logger;
 use serde_json::Error;
-use tokio_tungstenite::tungstenite::Message;
 
 use super::{
     BinanceOrderBookTopTickers, BinanceSubscribeMessage, BookTickerData, EventHandler, WsDataEvent,
