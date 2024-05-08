@@ -42,4 +42,8 @@ impl BinanceWsClient {
                 .store(true, std::sync::atomic::Ordering::SeqCst);
         }
     }
+
+    pub fn stop(&self) {
+        self.ws_client.stop();
+    }
 }
