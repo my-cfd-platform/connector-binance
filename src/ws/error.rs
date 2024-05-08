@@ -1,5 +1,4 @@
 use crate::ws::WsChannel;
-use my_web_socket_client::tokio_tungstenite::tungstenite;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -20,7 +19,7 @@ pub enum WsError {
     SocketNotAuthenticated,
 
     #[error(transparent)]
-    Tungstenite(#[from] tungstenite::Error),
+    Tungstenite(#[from] my_web_socket_client::hyper_tungstenite::tungstenite::Error),
 
     #[error(transparent)]
     Serde(#[from] serde_json::Error),

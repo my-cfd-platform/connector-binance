@@ -1,5 +1,4 @@
 use error_chain::error_chain;
-use my_web_socket_client::tokio_tungstenite::tungstenite;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -25,7 +24,7 @@ error_chain! {
         ParseFloatError(std::num::ParseFloatError);
         UrlParserError(url::ParseError);
         Json(serde_json::Error);
-        Tungstenite(tungstenite::Error);
+        Tungstenite(my_web_socket_client::hyper_tungstenite::tungstenite::Error);
         TimestampError(std::time::SystemTimeError);
     }
 }

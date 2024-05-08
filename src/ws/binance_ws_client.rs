@@ -1,3 +1,4 @@
+use my_web_socket_client::hyper_tungstenite::tungstenite::Message;
 use my_web_socket_client::WebSocketClient;
 use rust_extensions::Logger;
 use std::sync::atomic::AtomicBool;
@@ -6,7 +7,6 @@ use std::sync::Arc;
 use super::binance_client_callback::BinanceClientCallback;
 use super::binance_ws_settings::BinanceWsSetting;
 use super::event_handler::*;
-use my_web_socket_client::tokio_tungstenite::tungstenite::Message;
 
 pub struct BinanceWsClient {
     ws_client: WebSocketClient,

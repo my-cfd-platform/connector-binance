@@ -26,7 +26,6 @@ pub struct Kline {
     pub taker_buy_quote_asset_volume: String,
 }
 
-
 #[derive(Debug, Deserialize)]
 pub struct KlineData(
     i64,    // 0 open_time
@@ -60,7 +59,6 @@ impl From<KlineData> for Kline {
         }
     }
 }
-
 
 #[derive(Debug)]
 pub enum KlineInterval {
