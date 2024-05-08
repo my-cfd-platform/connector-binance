@@ -11,8 +11,9 @@ pub enum WsChannel {
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum WsDataEvent {
+pub enum BinanceDataEvent {
     BookTicker(BookTickerData),
+    Unknown(String),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -94,8 +95,8 @@ pub struct DepthOrderbookData {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct BinanceOrderBookTopTickers{
+pub struct BinanceOrderBookTopTickers {
     pub bids: Vec<Vec<String>>,
     pub asks: Vec<Vec<String>>,
-    pub last_update_id: u128
+    pub last_update_id: u128,
 }

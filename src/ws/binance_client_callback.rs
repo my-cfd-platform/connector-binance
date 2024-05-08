@@ -5,7 +5,8 @@ use rust_extensions::Logger;
 use serde_json::Error;
 
 use super::{
-    BinanceOrderBookTopTickers, BinanceSubscribeMessage, BookTickerData, EventHandler, WsDataEvent,
+    BinanceDataEvent, BinanceOrderBookTopTickers, BinanceSubscribeMessage, BookTickerData,
+    EventHandler,
 };
 
 pub struct BinanceClientCallback {
@@ -52,14 +53,8 @@ impl WsCallback for BinanceClientCallback {
         match data {
             Message::Text(msg) => {
                 let event = parse_msg(&msg);
-                match event {
-                    Ok(event) => {
-                        self.event_handler.on_data(event).await;
-                    }
-                    Err(err) => {
-                        println!("error: {}", err)
-                    }
-                }
+
+                self.event_handler.on_data(event).await;
             }
             Message::Ping(_) => {
                 connection.send_message(Message::Ping(vec![])).await;
@@ -76,19 +71,19 @@ impl WsCallback for BinanceClientCallback {
     }
 }
 
-fn parse_msg(msg: &str) -> Result<WsDataEvent, String> {
+fn parse_msg(msg: &str) -> BinanceDataEvent {
     let value: Result<serde_json::Value, Error> = serde_json::from_str(msg);
 
     let Ok(value) = value else {
-        return Err(format!("Failed to parse message: {}", msg));
+        return BinanceDataEvent::Unknown(msg.to_string());
     };
 
     let Some(stream) = value.get("stream") else {
-        return Err(format!("Failed to parse message: {}", msg));
+        return BinanceDataEvent::Unknown(msg.to_string());
     };
 
     let Some(data) = value.get("data") else {
-        return Err(format!("Failed to parse message: {}", msg));
+        return BinanceDataEvent::Unknown(msg.to_string());
     };
 
     let ticker = stream
@@ -107,5 +102,5 @@ fn parse_msg(msg: &str) -> Result<WsDataEvent, String> {
         best_ask_qty: data.asks.first().unwrap()[1].to_string(),
     };
 
-    return Ok(WsDataEvent::BookTicker(ticker));
+    return BinanceDataEvent::BookTicker(ticker);
 }
