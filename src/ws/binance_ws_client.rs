@@ -16,9 +16,8 @@ pub struct BinanceWsClient {
 
 impl BinanceWsClient {
     pub fn new(
-        event_handler: Arc<dyn EventHandler + Send + Sync + 'static>,
+        event_handler: Arc<dyn BinanceEventHandler + Send + Sync + 'static>,
         logger: Arc<dyn Logger + Send + Sync + 'static>,
-        instruments: Vec<String>,
     ) -> Self {
         let settings = Arc::new(BinanceWsSetting {});
         Self {
@@ -26,7 +25,6 @@ impl BinanceWsClient {
 
             is_started: AtomicBool::new(false),
             binance_client_callback: Arc::new(BinanceClientCallback::new(
-                instruments,
                 logger,
                 event_handler.clone(),
             )),

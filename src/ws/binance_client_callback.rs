@@ -4,25 +4,19 @@ use my_web_socket_client::{hyper_tungstenite::tungstenite::Message, WsCallback, 
 use rust_extensions::Logger;
 use serde_json::Error;
 
-use super::{
-    BinanceDataEvent, BinanceOrderBookTopTickers, BinanceSubscribeMessage, BookTickerData,
-    EventHandler,
-};
+use super::{BinanceDataEvent, BinanceEventHandler, BinanceOrderBookTopTickers, BookTickerData};
 
 pub struct BinanceClientCallback {
-    event_handler: Arc<dyn EventHandler + Send + Sync + 'static>,
-    pub instruments_to_subscribe: Vec<String>,
+    event_handler: Arc<dyn BinanceEventHandler + Send + Sync + 'static>,
     logger: Arc<dyn Logger + Send + Sync + 'static>,
 }
 
 impl BinanceClientCallback {
     pub fn new(
-        instruments_to_subscribe: Vec<String>,
         logger: Arc<dyn Logger + Send + Sync + 'static>,
-        event_handler: Arc<dyn EventHandler + Send + Sync + 'static>,
+        event_handler: Arc<dyn BinanceEventHandler + Send + Sync + 'static>,
     ) -> Self {
         Self {
-            instruments_to_subscribe,
             logger,
             event_handler,
         }
@@ -38,16 +32,37 @@ impl WsCallback for BinanceClientCallback {
             None,
         );
 
-        let subscribe_msg = BinanceSubscribeMessage::new(self.instruments_to_subscribe.clone());
-        connection
-            .send_message(Message::Text(
-                serde_json::to_string(&subscribe_msg).unwrap(),
-            ))
-            .await;
-        self.event_handler.on_connected().await;
+        let event_handler = self.event_handler.clone();
+
+        let result = tokio::spawn(async move {
+            event_handler.on_connected(connection).await;
+        })
+        .await;
+
+        if result.is_err() {
+            self.logger.write_error(
+                "BinanceWsClient".to_string(),
+                "Panic in on_connected event".to_string(),
+                None,
+            );
+        }
     }
 
-    async fn on_disconnected(&self, _: Arc<WsConnection>) {}
+    async fn on_disconnected(&self, connection: Arc<WsConnection>) {
+        let event_handler = self.event_handler.clone();
+
+        let result = tokio::spawn(async move {
+            event_handler.on_connected(connection).await;
+        })
+        .await;
+        if result.is_err() {
+            self.logger.write_error(
+                "BinanceWsClient".to_string(),
+                "Panic in on_disconnected event".to_string(),
+                None,
+            );
+        }
+    }
 
     async fn on_data(&self, connection: Arc<WsConnection>, data: Message) {
         match data {
@@ -63,7 +78,7 @@ impl WsCallback for BinanceClientCallback {
             Message::Close(_) => {
                 self.logger.write_info(
                     "BinanceWsClient".to_string(),
-                    format!("Disconnecting... Recieved close ws message"),
+                    format!("Disconnecting... Received close ws message"),
                     None,
                 );
             }
