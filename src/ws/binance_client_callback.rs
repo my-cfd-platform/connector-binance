@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use my_web_socket_client::{hyper_tungstenite::tungstenite::Message, WsCallback, WsConnection};
+use my_web_socket_client::{hyper_tungstenite::tungstenite::{Bytes, Message}, WsCallback, WsConnection};
 use rust_extensions::Logger;
 use serde_json::Error;
 
@@ -72,7 +72,7 @@ impl WsCallback for BinanceClientCallback {
                 self.event_handler.on_data(event).await;
             }
             Message::Ping(_) => {
-                connection.send_message(Message::Ping(vec![])).await;
+                connection.send_message(Message::Ping(Bytes::default())).await;
             }
             Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => (),
             Message::Close(_) => {
